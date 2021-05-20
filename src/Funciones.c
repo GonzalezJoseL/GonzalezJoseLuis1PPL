@@ -18,19 +18,20 @@ int Menu ()
 	printf("4. LISTADO DE TRABAJOS\n");
 	printf("5. LISTADO DE SERVICIOS\n");
 	printf("6. TOTAL EN PESOS POR SERVICIOS PRESTADOS\n");
-	printf("9. SALIDA\n");
+	printf("7. INFORMES\n");
+	printf("0. SALIDA\n");
 
-	utn_getInt(&opcion,"\n",3,9,1,9);
+	utn_getInt(&opcion,"\n",3,9,0,9);
 	return opcion;
 }
 
-int PedirDatos (eTrabajo lista[], int tam, int* id, char marcaBici[], int* rodadoBici, int* idServicio,int* index, eServicio listaS[],int* dia, int* mes, int* anio)
+int PedirDatos (eTrabajo lista[], int tam, int* id, int* idServicio,int* idBici,int* index,int* dia, int* mes, int* anio,eServicio listaS[],int tamS,eBicicleta listaB[],int tamB)
 
 {
 
 	int retorno=-1;
 
-	if (lista != NULL && tam >0 && marcaBici != NULL && idServicio != NULL && rodadoBici != NULL && idServicio != NULL  )
+	if (lista != NULL && tam >0 )
 
 		{
 
@@ -47,12 +48,11 @@ int PedirDatos (eTrabajo lista[], int tam, int* id, char marcaBici[], int* rodad
 
 
 						*id=Asignarid();
-
-						fflush(stdin);
-						utn_getNombre(marcaBici,"Por favor ingresar una MARCA  de bici \n",22,4);
-						utn_getInt(rodadoBici,"Por favor ingresar un RODADO de bici \n",12,4,1,10000);
 						MostrarListaServicios(listaS,S);
-						utn_getInt(idServicio,"Por favor ingresar un ID de Servicio \n",9,4,20000,30000);
+						utn_getInt(idServicio,"Por favor ingresar un ID de SERVICIO \n",9,4,20000,30000);
+						ListadoBicicletas(listaB,tamB);
+						utn_getInt(idBici,"Por favor ingresar un ID de BICI \n",9,4,1,5);
+
 						utn_getInt(dia,"Fechas:\nPor favor ingresar DIA (1-31)\n",4,4,1,31);
 						utn_getInt(mes,"Por favor ingresar MES (1-12)\n",4,4,1,12);
 						utn_getInt(anio,"Por favor ingresar AÑO (1921-2021)\n",6,4,1921,2021);
@@ -66,18 +66,17 @@ int PedirDatos (eTrabajo lista[], int tam, int* id, char marcaBici[], int* rodad
 	return retorno;
 }
 
-int LeerDatos (eTrabajo lista[], int tam, int id, char marcaBici[],int rodadoBici, int idServicio, int index, int dia, int mes, int anio)
+int LeerDatos (eTrabajo lista[], int tam, int id,int idBici,int idServicio, int index, int dia, int mes, int anio)
 
 {
 	int error=-1;
 
-	if (lista != NULL && tam >0 && marcaBici != NULL )
+	if (lista != NULL && tam >0)
 
 	{
 
 		lista[index].id=id;
-		strcpy(lista[index].marcaBicicleta,marcaBici);
-		lista[index].rodadoBicicleta=rodadoBici;
+		lista[index].idBici=idBici;
 		lista[index].idServicio=idServicio;
 		lista[index].isEmpty=OCUPADO;
 		lista[index].fecha.dia=dia;
@@ -91,28 +90,20 @@ int LeerDatos (eTrabajo lista[], int tam, int id, char marcaBici[],int rodadoBic
 	return error;
 }
 
-void MostrarTrabajo (eTrabajo Lista, eServicio listaS[], int tamS)
+void MostrarTrabajo (eTrabajo Lista, eServicio listaS[], int tamS,eBicicleta listaB[],int tamB)
 {
 	char nombre[41];
-
-
+	eBicicleta aux;
+	aux=BuscarBicicletaPorId(listaB,tamB,Lista.idBici);
 	DescripcionDelServicio(listaS,tamS,Lista.idServicio,nombre);
 
-	printf("ID: %d	MARCA: %s		RODADO: %d		SERVICIO: %s	ID Servicio: %d 	FECHA: %d/%d/%d\n"
+	printf("ID: %d 	SERVICIO: %s	MARCA: %s	RODADO: %d	FECHA: %d/%d/%d\n",Lista.id,nombre,aux.marca,aux.rodado,Lista.fecha.dia,Lista.fecha.mes,Lista.fecha.anio);
 
-														,Lista.id
-														,Lista.marcaBicicleta
-														,Lista.rodadoBicicleta
-														,nombre
-														,Lista.idServicio
-														,Lista.fecha.dia
-														,Lista.fecha.mes
-														,Lista.fecha.anio);
 
 }
 
 
-int ListadoTrabajos (eTrabajo Lista[],int tam, eServicio listaS[], int tamS)
+int ListadoTrabajos (eTrabajo Lista[],int tam, eServicio listaS[], int tamS,eBicicleta listaB[],int tamB)
 {
 	int i;
 	int retorno=0;
@@ -120,22 +111,22 @@ int ListadoTrabajos (eTrabajo Lista[],int tam, eServicio listaS[], int tamS)
 	{
 		if (Lista[i].isEmpty==OCUPADO)
 		{
-				MostrarTrabajo(Lista[i],listaS,tamS);
+				MostrarTrabajo(Lista[i],listaS,tamS,listaB,tamB);
 		}
 	}
 	return retorno;
 }
 
-int ModificarTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
+int ModificarTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS,eBicicleta listaB[],int tamB)
 {
 	int retorno=-1;
 	int id;
 	int indiceT;
-
+	eBicicleta aux;
 	char salida;
 	if (lista != NULL && tam >0)
 	{
-		ListadoTrabajos(lista,tam,listaS,tamS);
+		ListadoTrabajos(lista,tam,listaS,tamS,listaB,tamB);
 		utn_getInt(&id,"\nPor favor ingresar el ID del Trabajo a modificar\n",7,4,1,1000);
 		indiceT=BuscarTrabajoPorID(lista,tam,id);
 
@@ -146,7 +137,7 @@ int ModificarTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
 		else
 		{
 			printf("El id le corresponde al empleado: \n");
-			MostrarTrabajo(lista[indiceT],listaS,tamS);
+			MostrarTrabajo(lista[indiceT],listaS,tamS,listaB,tamB);
 			do
 			{
 
@@ -154,15 +145,17 @@ int ModificarTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
 				{
 
 				case 1:
-					printf("La MARCA es: %s	\n",lista[indiceT].marcaBicicleta);
-
-					utn_getNombre(lista[indiceT].marcaBicicleta,"Por favor ingresar nuevo MARCA: ",22,4);
-
+					aux=BuscarBicicletaPorId(listaB,tamB,lista[indiceT].idBici);
+					printf("La bicicleta es: \n");
+					MostrarBicicleta(aux);
+					printf("\n");
+					ListadoBicicletas(listaB,tamB);
+					utn_getInt(&lista[indiceT].idBici,"Por favor ingresar nueva BICICLETA",9,4,1,5);
 					break;
 				case 2:
 					printf("El SERVICIO es %d \n",lista[indiceT].idServicio);
 					MostrarListaServicios(listaS,tamS);
-					utn_getInt(&lista[indiceT].idServicio,"Por favor ingresar nuevo Servicio",9,4,20000,30000);
+					utn_getInt(&lista[indiceT].idServicio,"Por favor ingresar nuevo SERVICIO",9,4,20000,30000);
 					break;
 				case 3:
 					printf("Esta seguro que desea volver al menu principal? presione 's' para salir\n");
@@ -191,7 +184,7 @@ int MenuModificaciones ()
 
 
 	printf("Que desea modificar?\n");
-	printf("1. MARCA\n");
+	printf("1. BICI\n");
 	printf("2. SERVICIO\n");
 	printf("3. SALIR\n");
 
@@ -201,7 +194,7 @@ int MenuModificaciones ()
 	return opcion;
 }
 
-int BajaTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
+int BajaTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS,eBicicleta listaB[],int tamB)
 {
 	int retorno=-1;
 	int indiceT;
@@ -209,7 +202,7 @@ int BajaTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
 	int id;
 	if (lista != NULL && tam > 0)
 	{
-		ListadoTrabajos(lista,tam,listaS,tamS);
+		ListadoTrabajos(lista,tam,listaS,tamS,listaB,tamB);
 		utn_getInt(&id,"Por favor ingresar el ID del trabajo a dar BAJA",7,4,1,1000);
 		indiceT=BuscarTrabajoPorID(lista,tam,id);
 
@@ -220,7 +213,7 @@ int BajaTrabajo(eTrabajo lista[], int tam, eServicio listaS[], int tamS)
 		else
 		{
 
-			MostrarTrabajo(lista[indiceT],listaS,tamS);
+			MostrarTrabajo(lista[indiceT],listaS,tamS,listaB,tamB);
 
 
 			printf("Esta seguro que desea realizar la BAJA? s/n \n:");
@@ -290,3 +283,43 @@ int TotalEnPesos (eTrabajo listaT[], int tam, eServicio listaS[], int tamS)
 }
 
 
+void Ordenamiento (eTrabajo listaT[], int tam,eBicicleta listaB[], int tamB)
+
+{
+    eTrabajo pivot;
+    int i;
+    int j;
+    char descripuno[41];
+    char descripdos[42];
+
+    for (i=0;i<tam-1;i++)
+    {
+        for(j=i+1;j<tam;j++)
+        {
+            if (listaT[i].isEmpty==OCUPADO && listaT[j].isEmpty ==OCUPADO)
+            {
+                if (listaT[i].fecha.anio > listaT[j].fecha.anio)
+                {
+                    pivot = listaT[i];
+                    listaT[i] = listaT[j];
+                    listaT[j] = pivot;
+                }
+                else
+                {
+                    if (listaT[i].fecha.anio == listaT[j].fecha.anio)
+                    {
+                        DescripcionDeLaBicicleta(listaB,tamB,listaT[i].idBici,descripuno);
+                        DescripcionDeLaBicicleta(listaB,tamB,listaT[j].idBici,descripdos);
+                        if (stricmp(descripuno,descripdos)>0)
+                        {
+
+                        	pivot = listaT[i];
+                            listaT[i] = listaT[j];
+                            listaT[j] = pivot;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

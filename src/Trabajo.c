@@ -78,41 +78,4 @@ int BuscarTrabajoPorID(eTrabajo lista[], int tam,int id)
 	return indice;
 }
 
-int ordenarTrabajos(eTrabajo lista[], int tam)
-{
-    eTrabajo auxTrabajo;
-    int retorno = -1;
-
-    for(int i = 0; i < tam-1; i++)
-    {
-        for(int j = i+1; j < tam ; j++)
-        {
-            if(lista[i].fecha.anio==lista[j].fecha.anio)
-            {
-                if(strcmp(lista[i].marcaBicicleta,lista[j].marcaBicicleta)>0)
-                {
-
-                    auxTrabajo = lista[i];
-                    lista[i] = lista[j];
-                    lista[j] = auxTrabajo;
-                    retorno = 0;
-                }
-            }
-            else
-            {
-                if(lista[i].fecha.anio>lista[j].fecha.anio)
-                {
-                    auxTrabajo = lista[i];
-                    lista[i] = lista[j];
-                    lista[j] = auxTrabajo;
-                    retorno = 0;
-                }
-            }
-        }
-    }
-    return retorno;
-}
-
-
-
 

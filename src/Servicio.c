@@ -40,7 +40,7 @@ void MostrarServicio (eServicio servicio)
  }
 
 
-int DescripcionDelServicio(eServicio lista[], int tam, int buscarCodigo, char descripcion[])
+int DescripcionDelServicio(eServicio lista[], int tam, int id, char descripcion[])
 {
 	int retorno;
 	int i;
@@ -49,7 +49,7 @@ int DescripcionDelServicio(eServicio lista[], int tam, int buscarCodigo, char de
 	{
 		for(i=0;i<tam;i++)
 		{
-			if(lista[i].id==buscarCodigo)
+			if(lista[i].id==id)
 			{
 				strcpy(descripcion,lista[i].descripcion);
 				retorno=0;

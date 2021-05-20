@@ -21,8 +21,7 @@ typedef struct
     typedef struct
     {
         int id;
-        char marcaBicicleta[45];
-        int rodadoBicicleta;
+        int idBici;
         int idServicio;
         eFecha fecha;
         int isEmpty;
@@ -33,7 +32,7 @@ typedef struct
     int InicializarTrabajos (eTrabajo lista[],int tam);
     int BuscarLibre (eTrabajo lista[],int tam);
     int BuscarTrabajoPorID(eTrabajo lista[], int tam,int id);
-    int ordenarTrabajos(eTrabajo lista[], int tam);
+
 
 
 

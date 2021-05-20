@@ -21,6 +21,6 @@
 
  int MostrarListaServicios(eServicio servicios[], int tam);
  void MostrarServicio (eServicio servicio);
- int DescripcionDelServicio(eServicio lista[], int tam, int buscarCodigo, char descripcion[]);
+ int DescripcionDelServicio(eServicio lista[], int tam, int id, char descripcion[]);
  void HardcodearServicio(eServicio lista[]);
 #endif /* SERVICIO_H_ */
